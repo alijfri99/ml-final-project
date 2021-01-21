@@ -1,4 +1,5 @@
 import tensorflow as tf
+from tensorflow.keras import layers
 
 from Controllers import ImagesController
 from Controllers import CaptionsController
@@ -8,6 +9,7 @@ test_dir = "dataset/test/images"
 
 
 def read_images(mode):   # mode : test , train
+    normalization_layer = tf.keras.layers.experimental.preprocessing.Rescaling(1. / 255)
     if mode == 'train':
         return tf.keras.preprocessing.image_dataset_from_directory(
             train_dir,
