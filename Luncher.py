@@ -18,26 +18,25 @@ print("tests : " + str(tf.data.experimental.cardinality(test_ds).numpy()))
 
 num_classes = 19
 
-model = tf.keras.Sequential([
-    layers.experimental.preprocessing.Rescaling(1./255),
-    layers.Conv2D(32, 3, activation='relu'),
-    layers.MaxPooling2D(),
-    layers.Conv2D(32, 3, activation='relu'),
-    layers.MaxPooling2D(),
-    layers.Conv2D(32, 3, activation='relu'),
-    layers.MaxPooling2D(),
-    layers.Flatten(),
-    layers.Dense(128, activation='relu'),
-    layers.Dense(num_classes)
-])
+model = tf.keras.models.Sequential()
+model.add(layers.Conv2D(32, (3, 3), activation='relu', input_shape=(180, 180, 3)))
+model.add(layers.MaxPooling2D((2, 2)))
+model.add(layers.Conv2D(64, (3, 3), activation='relu'))
+model.add(layers.MaxPooling2D((2, 2)))
+model.add(layers.Conv2D(64, (3, 3), activation='relu'))
+model.add(layers.Flatten())
+model.add(layers.Dense(64, activation='relu'))
+model.add(layers.Dense(19))
 
-model.compile(
-  optimizer='adam',
-  loss=tf.losses.SparseCategoricalCrossentropy(from_logits=True),
-  metrics=['accuracy'])
+model.summary()
+
+model.compile(optimizer='adam',
+              loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
+              metrics=['accuracy'])
+
 
 model.fit(
   train_ds,
   validation_data=test_ds,
-  epochs=3
+  epochs=10
 )
