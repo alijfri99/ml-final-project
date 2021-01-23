@@ -1,5 +1,5 @@
 from tensorflow.keras.preprocessing import image
-from tensorflow.keras.applications.vgg19 import VGG19, preprocess_input
+from tensorflow.keras.applications.xception import Xception, preprocess_input
 import os
 import numpy as np
 import random
@@ -10,7 +10,7 @@ def load_image_features(data_type):
     dataset = []
     path = "dataset/" + data_type + "/images"
     categories = os.listdir(path)
-    model = VGG19(weights='imagenet', include_top=False)
+    model = Xception(include_top=False)
 
     for category in categories:
         current_path = path + "/" + category
@@ -24,5 +24,7 @@ def load_image_features(data_type):
             features = model.predict(img_data)
             dataset.append([features, class_num])
 
-    random.shuffle(dataset)
+    if data_type == "train":
+        random.shuffle(dataset)
+    print("Loaded " + data_type)
     return dataset

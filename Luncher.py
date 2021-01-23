@@ -6,7 +6,6 @@ from tensorflow.keras.utils import to_categorical
 from tensorflow.keras.applications.vgg16 import VGG16, preprocess_input
 
 train = load_image_features("train")
-print(train)
 train_x = []
 train_y = []
 
@@ -14,18 +13,42 @@ for features, label in train:
     train_x.append(features)
     train_y.append(label)
 
-train_x = np.array(train_x).reshape(-1, 1, 7, 7, 512)
+train_x = np.array(train_x).reshape(-1, train_x[0].shape[0], train_x[0].shape[1], train_x[0].shape[2],
+                                    train_x[0].shape[3])
 train_y = to_categorical(train_y)
+
+test = load_image_features("test")
+test_x = []
+test_y = []
+
+for features, label in test:
+    test_x.append(features)
+    test_y.append(label)
+
+print(test_x[0].shape)
+test_x = np.array(test_x).reshape(-1, test_x[0].shape[0], test_x[0].shape[1], test_x[0].shape[2], test_x[0].shape[3])
+test_y = to_categorical(test_y)
 
 model = Sequential()
 model.add(Flatten())
-model.add(Dense(256))
+model.add(Dense(128))
+model.add(Activation('relu'))
+model.add(Dense(128))
+model.add(Activation('relu'))
+model.add(Dense(128))
+model.add(Activation('relu'))
+model.add(Dense(128))
+model.add(Activation('relu'))
+model.add(Dense(128))
 model.add(Activation('relu'))
 model.add(Dense(19))
 model.add(Activation('softmax'))
 
 model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 model.fit(train_x, train_y, epochs=4, batch_size=64, validation_split=0.1)
+
+score = model.evaluate(test_x, test_y)
+print(score)
 
 '''
 class_names = train_ds.class_names
