@@ -4,13 +4,22 @@ import PIL
 import PIL.Image
 import tensorflow as tf
 from tensorflow.keras import layers
-
-
 from Utilities import FilesHandling
+from tools import *
+import matplotlib.pyplot as plt
 
-train_ds = FilesHandling.read_images("train")
-test_ds = FilesHandling.read_images("test")
+train = load_images("train", 128)
+train_x = []
+train_y = []
 
+for features, label, _, _ in train:
+    train_x.append(features)
+    train_y.append(label)
+
+train_x = np.array(train_x).reshape(-1, 128, 128, 1)
+train_x = train_x/255.0
+
+'''
 class_names = train_ds.class_names
 print(class_names)
 print("trains : " + str(tf.data.experimental.cardinality(train_ds).numpy()))
@@ -40,3 +49,4 @@ model.fit(
   validation_data=test_ds,
   epochs=10
 )
+'''
