@@ -3,25 +3,20 @@ from tools import *
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Conv2D, MaxPooling2D, Dense, Dropout, Activation, Flatten
 from tensorflow.keras.utils import to_categorical
+from tensorflow.keras.applications.vgg16 import VGG16, preprocess_input
 
-train = load_images("train", 128)
+train = load_image_features("train")
+print(train)
 train_x = []
 train_y = []
 
-for features, label, _, _ in train:
+for features, label in train:
     train_x.append(features)
     train_y.append(label)
 
-train_x = np.array(train_x).reshape(-1, 128, 128, 1)
-train_y = to_categorical(train_y, 19)
-train_x = train_x/255.0
-print(train_x.shape)
-val_x = train_x[485:]
-val_y = train_y[485:]
-train_x = train_x[0:485]
-train_y = train_y[0:485]
+print(train_x[0])
+print(train_x[0].shape)
 
-print(train_x.shape, val_x.shape)
 
 print("Loaded and normalized the training data.")
 '''
