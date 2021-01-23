@@ -2,31 +2,18 @@ import numpy as np
 from tools import *
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Conv2D, MaxPooling2D, Dense, Dropout, Activation, Flatten
-from tensorflow.keras.utils import to_categorical
 from tensorflow.keras.applications.vgg16 import VGG16, preprocess_input
+import matplotlib.pyplot as plt
 
-train = load_image_features("train")
-train_x = []
-train_y = []
+train = load_images("train", 0.1)
+train_x, train_y = split_dataset(train)
+test = load_images("test", None)
+test_x, test_y = split_dataset(test)
+train_x, train_y = reshape(train_x, train_y)
+test_x, test_y = reshape(test_x, test_y)
 
-for features, label in train:
-    train_x.append(features)
-    train_y.append(label)
-
-train_x = np.array(train_x).reshape(-1, train_x[0].shape[0], train_x[0].shape[1], train_x[0].shape[2],
-                                    train_x[0].shape[3])
-train_y = to_categorical(train_y)
-
-test = load_image_features("test")
-test_x = []
-test_y = []
-
-for features, label in test:
-    test_x.append(features)
-    test_y.append(label)
-
-test_x = np.array(test_x).reshape(-1, test_x[0].shape[0], test_x[0].shape[1], test_x[0].shape[2], test_x[0].shape[3])
-test_y = to_categorical(test_y)
+print(train_x.shape, train_y.shape)
+print(test_x.shape, test_y.shape)
 
 model = Sequential()
 model.add(Flatten())
