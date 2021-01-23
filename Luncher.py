@@ -14,31 +14,19 @@ for features, label in train:
     train_x.append(features)
     train_y.append(label)
 
-print(train_x[0])
-print(train_x[0].shape)
+train_x = np.array(train_x).reshape(-1, 1, 7, 7, 512)
+train_y = to_categorical(train_y)
 
-
-print("Loaded and normalized the training data.")
-'''
 model = Sequential()
-model.add(Conv2D(32, (3, 3), input_shape=train_x.shape[1:]))
-model.add(Activation("relu"))
-model.add(MaxPooling2D(pool_size=(2, 2)))
-
-model.add(Conv2D(32, (3, 3), input_shape=train_x.shape[1:]))
-model.add(Activation("relu"))
-model.add(MaxPooling2D(pool_size=(2, 2)))
-
 model.add(Flatten())
-model.add(Dense(32))
-model.add(Activation("relu"))
-
+model.add(Dense(256))
+model.add(Activation('relu'))
 model.add(Dense(19))
-model.add(Activation("softmax"))
+model.add(Activation('softmax'))
 
 model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
-model.fit(train_x, train_y, epochs=26, batch_size=64, validation_data=(val_x, val_y))
-'''
+model.fit(train_x, train_y, epochs=4, batch_size=64, validation_split=0.1)
+
 '''
 class_names = train_ds.class_names
 print(class_names)

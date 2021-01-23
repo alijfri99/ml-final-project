@@ -1,6 +1,5 @@
 from tensorflow.keras.preprocessing import image
-from tensorflow.keras.applications.vgg16 import VGG16
-from tensorflow.keras.applications.vgg16 import preprocess_input
+from tensorflow.keras.applications.vgg19 import VGG19, preprocess_input
 import os
 import numpy as np
 import random
@@ -11,7 +10,7 @@ def load_image_features(data_type):
     dataset = []
     path = "dataset/" + data_type + "/images"
     categories = os.listdir(path)
-    model = VGG16(include_top=False)
+    model = VGG19(weights='imagenet', include_top=False)
 
     for category in categories:
         current_path = path + "/" + category
