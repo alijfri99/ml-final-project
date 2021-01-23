@@ -14,29 +14,30 @@ for features, label, _, _ in train:
 
 train_x = np.array(train_x).reshape(-1, 128, 128, 1)
 train_y = to_categorical(train_y, 19)
-print(train_y.shape)
 train_x = train_x/255.0
+val_x = train_x[485:]
+val_y = train_y[485:]
 
 print("Loaded and normalized the training data.")
 
 model = Sequential()
-model.add(Conv2D(16, (3, 3), input_shape=train_x.shape[1:]))
+model.add(Conv2D(32, (3, 3), input_shape=train_x.shape[1:]))
 model.add(Activation("relu"))
 model.add(MaxPooling2D(pool_size=(2, 2)))
 
-model.add(Conv2D(16, (3, 3), input_shape=train_x.shape[1:]))
+model.add(Conv2D(32, (3, 3), input_shape=train_x.shape[1:]))
 model.add(Activation("relu"))
 model.add(MaxPooling2D(pool_size=(2, 2)))
 
 model.add(Flatten())
-model.add(Dense(16))
+model.add(Dense(32))
 model.add(Activation("relu"))
 
 model.add(Dense(19))
 model.add(Activation("softmax"))
 
 model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
-model.fit(train_x, train_y, epochs=100, batch_size=64, validation_split=0.1)
+model.fit(train_x, train_y, epochs=26, batch_size=64, validation_data=(val_x, val_y))
 
 '''
 class_names = train_ds.class_names
