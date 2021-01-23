@@ -15,11 +15,16 @@ for features, label, _, _ in train:
 train_x = np.array(train_x).reshape(-1, 128, 128, 1)
 train_y = to_categorical(train_y, 19)
 train_x = train_x/255.0
+print(train_x.shape)
 val_x = train_x[485:]
 val_y = train_y[485:]
+train_x = train_x[0:485]
+train_y = train_y[0:485]
+
+print(train_x.shape, val_x.shape)
 
 print("Loaded and normalized the training data.")
-
+'''
 model = Sequential()
 model.add(Conv2D(32, (3, 3), input_shape=train_x.shape[1:]))
 model.add(Activation("relu"))
@@ -38,7 +43,7 @@ model.add(Activation("softmax"))
 
 model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 model.fit(train_x, train_y, epochs=26, batch_size=64, validation_data=(val_x, val_y))
-
+'''
 '''
 class_names = train_ds.class_names
 print(class_names)
