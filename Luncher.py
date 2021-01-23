@@ -1,12 +1,8 @@
 import numpy as np
-import os
-import PIL
-import PIL.Image
-import tensorflow as tf
-from tensorflow.keras import layers
-from Utilities import FilesHandling
 from tools import *
-import matplotlib.pyplot as plt
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Conv2D, MaxPooling2D, Dense, Dropout, Activation, Flatten
+from tensorflow.keras.utils import to_categorical
 
 train = load_images("train", 128)
 train_x = []
@@ -17,7 +13,30 @@ for features, label, _, _ in train:
     train_y.append(label)
 
 train_x = np.array(train_x).reshape(-1, 128, 128, 1)
+train_y = to_categorical(train_y, 19)
+print(train_y.shape)
 train_x = train_x/255.0
+
+print("Loaded and normalized the training data.")
+
+model = Sequential()
+model.add(Conv2D(16, (3, 3), input_shape=train_x.shape[1:]))
+model.add(Activation("relu"))
+model.add(MaxPooling2D(pool_size=(2, 2)))
+
+model.add(Conv2D(16, (3, 3), input_shape=train_x.shape[1:]))
+model.add(Activation("relu"))
+model.add(MaxPooling2D(pool_size=(2, 2)))
+
+model.add(Flatten())
+model.add(Dense(16))
+model.add(Activation("relu"))
+
+model.add(Dense(19))
+model.add(Activation("softmax"))
+
+model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
+model.fit(train_x, train_y, epochs=100, batch_size=64, validation_split=0.1)
 
 '''
 class_names = train_ds.class_names
