@@ -1,5 +1,5 @@
 from tensorflow.keras.preprocessing import image
-from tensorflow.keras.applications.xception import Xception, preprocess_input
+from tensorflow.keras.applications.densenet import DenseNet169, preprocess_input
 import os
 import numpy as np
 import random
@@ -10,7 +10,7 @@ def load_image_features(data_type):
     dataset = []
     path = "dataset/" + data_type + "/images"
     categories = os.listdir(path)
-    model = Xception(include_top=False)
+    model = DenseNet169(include_top=False)
 
     for category in categories:
         current_path = path + "/" + category
