@@ -5,28 +5,25 @@ from tensorflow.keras.layers import Conv2D, MaxPooling2D, Dense, Dropout, Activa
 from tensorflow.keras.applications.vgg16 import VGG16, preprocess_input
 import matplotlib.pyplot as plt
 
-train = load_images("train", 0.1)
+train = load_images("train")
+test = load_images("test")
 train_x, train_y = split_dataset(train)
-test = load_images("test", None)
 test_x, test_y = split_dataset(test)
 train_x, train_y = reshape(train_x, train_y)
 test_x, test_y = reshape(test_x, test_y)
-
-print(train_x.shape, train_y.shape)
-print(test_x.shape, test_y.shape)
+print(train_x.shape, test_x.shape)
 
 model = Sequential()
 model.add(Flatten())
 model.add(Dense(1024))
 model.add(Activation('relu'))
+model.add(Dropout(0.5))
 model.add(Dense(19))
 model.add(Activation('softmax'))
 
 model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
-model.fit(train_x, train_y, epochs=10, batch_size=64, validation_split=0.1)
+model.fit(train_x, train_y, epochs=10, batch_size=64, validation_data=(test_x, test_y))
 
-score = model.evaluate(test_x, test_y)
-print(score)
 
 '''
 class_names = train_ds.class_names
