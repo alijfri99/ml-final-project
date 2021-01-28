@@ -5,26 +5,35 @@ from tensorflow.keras.layers import Conv2D, MaxPooling2D, Dense, Dropout, Activa
 from tensorflow.keras.applications.vgg16 import VGG16, preprocess_input
 import matplotlib.pyplot as plt
 
+
 train = load_images("train")
 test = load_images("test")
 train_x, train_y = split_dataset(train)
 test_x, test_y = split_dataset(test)
-train_x, train_y = reshape(train_x, train_y)
-test_x, test_y = reshape(test_x, test_y)
-print(train_x.shape, test_x.shape)
+reshape(train_x, train_y, "train")
+reshape(test_x, test_y, "test")
+
+'''
+train_x = np.load(open("train.npy", 'rb'))
+train_y = np.load(open("train_labels.npy", 'rb'))
+test_x = np.load(open("test.npy", 'rb'))
+test_y = np.load(open("test_labels.npy", 'rb'))
 
 model = Sequential()
 model.add(Flatten())
-model.add(Dense(1024))
+model.add(Dense(1024, kernel_regularizer='l2'))
+model.add(Activation('relu'))
+model.add(Dropout(0.5))
+model.add(Dense(1024, kernel_regularizer='l2'))
 model.add(Activation('relu'))
 model.add(Dropout(0.5))
 model.add(Dense(19))
 model.add(Activation('softmax'))
 
 model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
-model.fit(train_x, train_y, epochs=10, batch_size=64, validation_data=(test_x, test_y))
+model.fit(train_x, train_y, epochs=20, batch_size=64, validation_data=(test_x, test_y))
 
-
+'''
 '''
 class_names = train_ds.class_names
 print(class_names)
