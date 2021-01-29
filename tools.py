@@ -2,11 +2,12 @@ from tensorflow.keras.preprocessing import image
 from tensorflow.keras.applications.densenet import DenseNet169, preprocess_input
 from tensorflow.keras.utils import to_categorical
 from tqdm import tqdm
-from PIL import Image, ImageOps, ImageFilter
+from PIL import Image, ImageOps, ImageChops, ImageFilter
 import os
 import numpy as np
 import random
-import math
+import copy
+
 import matplotlib.pyplot as plt
 
 
@@ -65,6 +66,10 @@ def augment(inp_image):
     result.append(inp_image)
     result += flip(inp_image)
     result += rotate(inp_image, 45)
+    result += noise(inp_image)
+    result.append(equalize(inp_image))
+    result.append(reduce(inp_image))
+    result += shift(inp_image, 30)
     return result
 
 
@@ -86,14 +91,46 @@ def rotate(inp_image, angle):
     return result
 
 
-def translate(inp_image, amount):
-    result = list()
-    result.append(inp_image.transform(inp_image.size, Image.AFFINE, (1, 0, amount, 0, 0, 0)))
-    return result
-
-
 def noise(inp_image):
     result = list()
     result.append(inp_image.filter(ImageFilter.GaussianBlur(radius=1)))
     result.append(inp_image.filter(ImageFilter.GaussianBlur(radius=2)))
+    result.append(salt_and_pepper(inp_image))
+    return result
+
+
+def salt_and_pepper(inp_image, amount):
+    result = copy.copy(inp_image)
+    pixels = result.load()
+    area = amount * result.size[0] * result.size[1] * 0.5
+    for i in range(area):
+        xb = random.randint(0, result.size[0])
+        yb = random.randint(0, result.size[1])
+        xw = random.randint(0, result.size[0])
+        yw = random.randint(0, result.size[1])
+        pixels[xb, yb] = (0, 0, 0)
+        pixels[xw, yw] = (255, 255, 255)
+    return result
+
+
+def equalize(inp_image):
+    result = ImageOps.equalize(inp_image)
+    return result
+
+
+def reduce(inp_image):
+    result = ImageOps.posterize(inp_image, 2)
+    return result
+
+
+def shift(inp_image, amount):
+    result = list()
+    result.append(ImageChops.offset(inp_image, -amount, 0))
+    result.append(ImageChops.offset(inp_image, amount, 0))
+    result.append(ImageChops.offset(inp_image, 0, -amount))
+    result.append(ImageChops.offset(inp_image, 0, amount))
+    result.append(ImageChops.offset(inp_image, -amount, -amount))
+    result.append(ImageChops.offset(inp_image, -amount, amount))
+    result.append(ImageChops.offset(inp_image, amount, -amount))
+    result.append(ImageChops.offset(inp_image, amount, amount))
     return result
