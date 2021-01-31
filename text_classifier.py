@@ -4,17 +4,15 @@ from tensorflow.keras.layers import Dense, Dropout, Activation, Flatten
 
 train = load_texts("train")
 train_x, train_y = split_dataset(train)
-train_x = extract_features(train_x)
-train_x, train_y = reshape(train_x, train_y)
-
 test = load_texts("test")
 test_x, test_y = split_dataset(test)
-test_x = extract_features(test_x)
+train_x, test_x = extract_features(train_x, test_x)
+train_x, train_y = reshape(train_x, train_y)
 test_x, test_y = reshape(test_x, test_y)
 
 model = Sequential()
 model.add(Flatten())
-model.add(Dense(2048))
+model.add(Dense(64))
 model.add(Activation('sigmoid'))
 model.add(Dropout(0.5))
 model.add(Dense(19))
