@@ -1,11 +1,14 @@
 import os
 import nltk
-from nltk.tokenize import RegexpTokenizer
+import numpy as np
+import random
 from nltk.corpus import stopwords
 from nltk.stem import PorterStemmer
 from tqdm import tqdm
+from gensim.models.doc2vec import Doc2Vec, TaggedDocument
+from tensorflow.keras.utils import to_categorical
 
-
+'''
 def load_texts(data_type):
     dataset = []
     path = "dataset/" + data_type + "/sentences"
@@ -19,13 +22,15 @@ def load_texts(data_type):
 
         for text_path in tqdm(os.listdir(current_path)):
             text = open(current_path + "/" + text_path, 'r')
-            filtered_text = [w for w in nltk.word_tokenize(text.read()) if w not in stop_words and w != '.']
-            final_text = [porter.stem(word) for word in filtered_text]
-            final_text = list(dict.fromkeys(final_text))
-            dataset.append([final_text, class_num])
+            filtered_text = [porter.stem(w) for w in nltk.word_tokenize(text.read()) if w not in stop_words
+                             and w != '.']
+            filtered_text = list(dict.fromkeys(filtered_text))
+            dataset.append([filtered_text, class_num])
 
+    # if data_type == "train":
+        # random.shuffle(dataset)
     return dataset
-
+'''
 
 def split_dataset(dataset):
     dataset_x = []
@@ -37,8 +42,18 @@ def split_dataset(dataset):
     return dataset_x, dataset_y
 
 
-a = load_texts("train")
-b, c = split_dataset(a)
-print(b)
-print(len(b), len(c))
-print(c)
+def extract_features(documents):
+    tagged_documents = [TaggedDocument(doc, [i]) for i, doc in enumerate(documents)]
+    model = Doc2Vec(vector_size=10, window=10, min_count=1, workers=8, alpha=0.025, min_alpha=0.01, dm=0)
+    model.build_vocab(tagged_documents)
+    print("1: ", model.docvecs[0])
+    model.train(tagged_documents, total_examples=len(tagged_documents), epochs=100)
+    print("2: ", model.docvecs[0])
+    result = [model.docvecs[i] for i in range(len(documents))]
+    return result
+
+
+def reshape(dataset_x, dataset_y):
+    dataset_x = np.array(dataset_x).reshape(-1, dataset_x[0].shape[0])
+    dataset_y = to_categorical(dataset_y, 19)
+    return dataset_x, dataset_y
