@@ -1,5 +1,5 @@
 from tensorflow.keras.preprocessing import image
-from tensorflow.keras.applications.densenet import DenseNet169, preprocess_input
+from tensorflow.keras.applications.densenet import DenseNet201, preprocess_input
 from tensorflow.keras.utils import to_categorical
 from tqdm import tqdm
 from PIL import Image, ImageOps, ImageChops, ImageFilter
@@ -19,7 +19,7 @@ def load_images(data_type):
     for category in categories:
         current_path = path + "/" + category
         class_num = categories.index(category)
-        model = DenseNet169(include_top=False, input_shape=(224, 224, 3))
+        model = DenseNet201(include_top=False, input_shape=(224, 224, 3))
 
         for image_path in tqdm(os.listdir(current_path)):
             img = image.load_img(current_path + "/" + image_path, target_size=(224, 224))
@@ -95,7 +95,8 @@ def noise(inp_image):
     result = list()
     result.append(inp_image.filter(ImageFilter.GaussianBlur(radius=1)))
     result.append(inp_image.filter(ImageFilter.GaussianBlur(radius=2)))
-    result.append(salt_and_pepper(inp_image))
+    # result.append(salt_and_pepper(inp_image, 0.05))
+    # result += channel_noise(inp_image)
     return result
 
 
@@ -103,13 +104,44 @@ def salt_and_pepper(inp_image, amount):
     result = copy.copy(inp_image)
     pixels = result.load()
     area = amount * result.size[0] * result.size[1] * 0.5
-    for i in range(area):
-        xb = random.randint(0, result.size[0])
-        yb = random.randint(0, result.size[1])
-        xw = random.randint(0, result.size[0])
-        yw = random.randint(0, result.size[1])
+    for i in range(int(area)):
+        xb = random.randint(0, result.size[0] - 1)
+        yb = random.randint(0, result.size[1] - 1)
+        xw = random.randint(0, result.size[0] - 1)
+        yw = random.randint(0, result.size[1] - 1)
         pixels[xb, yb] = (0, 0, 0)
         pixels[xw, yw] = (255, 255, 255)
+    return result
+
+
+def channel_noise(inp_image):
+    result = list()
+
+    r = (1, 0, 0, 0,
+         0, 0, 0, 0,
+         0, 0, 0, 0)
+    g = (0, 0, 0, 0,
+         0, 1, 0, 0,
+         0, 0, 0, 0)
+    b = (0, 0, 0, 0,
+         0, 0, 0, 0,
+         0, 0, 1, 0)
+    rg = (1, 0, 0, 0,
+          0, 1, 0, 0,
+          0, 0, 0, 0)
+    rb = (1, 0, 0, 0,
+          0, 0, 0, 0,
+          0, 0, 1, 0)
+    gb = (0, 0, 0, 0,
+          0, 1, 0, 0,
+          0, 0, 1, 0)
+
+    result.append(inp_image.convert("RGB", r))
+    result.append(inp_image.convert("RGB", g))
+    result.append(inp_image.convert("RGB", b))
+    result.append(inp_image.convert("RGB", rg))
+    result.append(inp_image.convert("RGB", rb))
+    result.append(inp_image.convert("RGB", gb))
     return result
 
 

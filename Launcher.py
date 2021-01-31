@@ -1,4 +1,4 @@
-from tools import *
+from image_tools import *
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, Dropout, Activation, Flatten
 
@@ -19,9 +19,9 @@ test_y = np.load(open("test_labels.npy", 'rb'))
 
 model = Sequential()
 model.add(Flatten())
-model.add(Dense(2048))
+model.add(Dense(1024))
 model.add(Activation('sigmoid'))
-model.add(Dropout(0.5))
+model.add(Dropout(0.45))
 model.add(Dense(19))
 model.add(Activation('softmax'))
 
