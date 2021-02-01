@@ -2,6 +2,7 @@ from image_tools import *
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, Dropout, Activation, Flatten
 
+
 '''
 train = load_images("train")
 test = load_images("test")
