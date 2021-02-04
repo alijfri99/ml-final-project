@@ -31,9 +31,10 @@ def find_nearest_texts(text, train_x):
     return sorted(result, key=lambda x: x[0], reverse=True)[0:10]
 
 
-def get_pictures(nearest_texts, train_y, train_path):
+def get_images(nearest_texts, train_y, train_path):
     result = []
     for _, index in nearest_texts:
+        print(get_categories()[np.argmax(train_y[index])])
         result.append(plt.imread("dataset/train/images/" + get_categories()[np.argmax(train_y[index])] +
                                  "/" + train_path[index]))
     return result
