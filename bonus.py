@@ -1,6 +1,5 @@
 from text_tools import *
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense, Dropout, Activation, Flatten
+from tensorflow.keras.models import load_model
 import matplotlib.pyplot as plt
 
 train = load_texts("train")
@@ -11,17 +10,8 @@ train_x, test_x = extract_features(train_x, test_x)
 train_x, train_y = reshape(train_x, train_y)
 test_x, test_y = reshape(test_x, test_y)
 
-
-model = Sequential()
-model.add(Flatten())
-model.add(Dense(32))
-model.add(Activation('relu'))
-model.add(Dropout(0.5))
-model.add(Dense(19))
-model.add(Activation('softmax'))
-
-model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
-model.fit(train_x, train_y, epochs=20, batch_size=32, validation_data=(test_x, test_y))
+model = load_model('text_model.h5')
+model.evaluate(test_x, test_y)
 a = model.predict(test_x[1].reshape(1, test_x[0].shape[0]))
 print(a.argmax())
 print(test[1])
