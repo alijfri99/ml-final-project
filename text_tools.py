@@ -25,7 +25,7 @@ def load_texts(data_type):
             filtered_text = [porter.stem(w) for w in nltk.word_tokenize(text.read()) if w not in stop_words
                              and w != '.']
             filtered_text = list(dict.fromkeys(filtered_text))
-            dataset.append([filtered_text, class_num])
+            dataset.append([filtered_text, text_path[:len(text_path) - 4] + ".jpg", class_num])
 
     if data_type == "train":
         random.shuffle(dataset)
@@ -35,7 +35,7 @@ def load_texts(data_type):
 def split_dataset(dataset):
     dataset_x = []
     dataset_y = []
-    for features, label in dataset:
+    for features, _, label in dataset:
         dataset_x.append(features)
         dataset_y.append(label)
 
@@ -53,3 +53,7 @@ def reshape(dataset_x, dataset_y):
     dataset_x = np.array(dataset_x)
     dataset_y = to_categorical(dataset_y, 19)
     return dataset_x, dataset_y
+
+
+def get_categories():
+    return os.listdir("dataset/train/images")
