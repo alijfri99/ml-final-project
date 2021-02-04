@@ -53,7 +53,3 @@ def reshape(dataset_x, dataset_y):
     dataset_x = np.array(dataset_x)
     dataset_y = to_categorical(dataset_y, 19)
     return dataset_x, dataset_y
-
-
-def get_categories():
-    return os.listdir("dataset/train/images")
