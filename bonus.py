@@ -14,13 +14,14 @@ test_x, test_y = reshape(test_x, test_y)
 
 model = load_model('text_model.h5')
 model.evaluate(test_x, test_y)
-predicted_value = np.argmax(model.predict(test_x[62].reshape(1, test_x[0].shape[0])))
+predicted_value = np.argmax(model.predict(test_x[190].reshape(1, test_x[0].shape[0])))
 print(predicted_value, get_categories()[predicted_value])
-a = find_nearest_texts(test_x[62], train_x)
+a = find_nearest_texts(test_x[190], train_x)
 b = get_images(a, train_y, train_path)
-for i in b:
+encodings = encode_images(b)
+for i in encodings:
     plt.figure()
-    plt.imshow(i)
+    plt.imshow(decode_image(i))
 plt.show()
 input()
 a = model.predict(test_x[1].reshape(1, test_x[0].shape[0]))
