@@ -1,14 +1,12 @@
 from tensorflow.keras.preprocessing import image
-from tensorflow.keras.applications.densenet import DenseNet201, preprocess_input
+from tensorflow.keras.applications.densenet import DenseNet169, preprocess_input
 from tensorflow.keras.utils import to_categorical
 from tqdm import tqdm
-from PIL import Image, ImageOps, ImageChops, ImageFilter
+from PIL import ImageOps, ImageChops, ImageFilter
 import os
 import numpy as np
 import random
 import copy
-
-import matplotlib.pyplot as plt
 
 
 def load_images(data_type):
@@ -19,7 +17,7 @@ def load_images(data_type):
     for category in categories:
         current_path = path + "/" + category
         class_num = categories.index(category)
-        model = DenseNet201(include_top=False, input_shape=(224, 224, 3))
+        model = DenseNet169(include_top=False, input_shape=(224, 224, 3))
 
         for image_path in tqdm(os.listdir(current_path)):
             img = image.load_img(current_path + "/" + image_path, target_size=(224, 224))

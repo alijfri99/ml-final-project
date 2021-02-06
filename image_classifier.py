@@ -27,5 +27,6 @@ model.add(Dense(19))
 model.add(Activation('softmax'))
 
 model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
-model.fit(train_x, train_y, epochs=2, batch_size=64, validation_data=(test_x, test_y))
+model.fit(train_x, train_y, epochs=3, batch_size=64, validation_split=0.1)
+model.evaluate(test_x, test_y)
 model.save('image_model.h5')

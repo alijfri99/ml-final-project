@@ -46,10 +46,21 @@ def extract_features(train_x, test_x):
     vectorizer = CountVectorizer(analyzer=lambda x: x)
     train_x = vectorizer.fit_transform(train_x)
     test_x = vectorizer.transform(test_x)
-    return train_x.toarray(), test_x.toarray()
+    return train_x.toarray(), test_x.toarray(), vectorizer
 
 
 def reshape(dataset_x, dataset_y):
     dataset_x = np.array(dataset_x)
     dataset_y = to_categorical(dataset_y, 19)
     return dataset_x, dataset_y
+
+
+def preprocess_input(text, vectorizer):
+    stop_words = set(stopwords.words('english'))
+    porter = PorterStemmer()
+    filtered_text = [porter.stem(w) for w in nltk.word_tokenize(text) if w not in stop_words
+                     and w != '.']
+    filtered_text = list(dict.fromkeys(filtered_text))
+    filtered_text = vectorizer.transform([filtered_text])
+    return filtered_text.A
+
